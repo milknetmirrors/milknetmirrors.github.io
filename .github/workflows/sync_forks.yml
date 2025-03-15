@@ -25,7 +25,10 @@ jobs:
       - name: Sync Fork with Upstream
         run: |
           git checkout main
-          git merge upstream/main --allow-unrelated-histories
-          git push origin main
+          git merge upstream/main --allow-unrelated-histories -X ours
+          git checkout --ours CNAME
+          
+          git push origin main # or master if that's your default branch
+
       - name: Clean up
         run: git remote remove upstream
