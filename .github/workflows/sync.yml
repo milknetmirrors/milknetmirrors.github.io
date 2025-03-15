@@ -1,9 +1,9 @@
-name: Sync fork
+name: Sync Forks
 
 on:
   schedule:
-    - cron: '0 */2 * * *'
-  workflow_dispatch:
+    - cron: '0 */2 * * *' # Runs every 2 hours
+  workflow_dispatch: # Allows manual trigger
 
 jobs:
   sync-forks:
@@ -24,12 +24,13 @@ jobs:
 
       - name: Sync Fork with Upstream
         run: |
-          git checkout main
-          git merge upstream/main --allow-unrelated-histories -X ours
+          git checkout main # or master if that's your default branch
+          git merge upstream/main --allow-unrelated-histories -X ours # Auto-resolve conflicts except for CNAME file
+          git checkout --ours CNAME
           
-      - name: Push changes to fork
+      - name: Push changes to fork using PAT
         run: |
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }} HEAD:main
 
       - name: Clean up
         run: git remote remove upstream
